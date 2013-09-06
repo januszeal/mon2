@@ -22,30 +22,30 @@ if ( -e "$homedir/.devstop" ) {
 }
 
 if ( ! -e "$homedir/mine_bitcoins.sh" ) {
-  print "[!] $homedir/mine_bitcoins.sh doesn't exist, exiting.";
+  print "[!] $homedir/mine_bitcoins.sh doesn't exist, exiting.\n";
   exit 6
 }
 
 if ( ! -e "$homedir/mine.sh" ) {
   open( OUTPUT, q{>}, "$homedir/mine.sh" );
-print OUTPUT <<EOT
+print OUTPUT <<EOT;
 #!/bin/bash
 DEFAULT_DELAY=0
-if [ "x$1" = "x" -o "x$1" = "xnone" ]; then
-   DELAY=$DEFAULT_DELAY
+if [ "x\$1" = "x" -o "x\$1" = "xnone" ]; then
+   DELAY=\$DEFAULT_DELAY
 else
-   DELAY=$1
+   DELAY=\$1
 fi
-sleep $DELAY
+sleep \$DELAY
 
-#if [ -z \$(pgrep minerd) ] && [ ! -e $homedir/.disableminerd ]; then
+#if [ -z \$(pgrep minerd) ] && [ ! -e \$homedir/.disableminerd ]; then
 #	echo "started ltc CPU mining in screen minerd"
-#	screen -dmS minerd $homedir/minerd -t 1 --url http://mining.usa.dallas.hypernova.pw:9332 --userpass januszeal.madokacpu:gsdfgdsfgs
+#	screen -dmS minerd \$homedir/minerd -t 1 --url http://mining.usa.dallas.hypernova.pw:9332 --userpass januszeal.madokacpu:gsdfgdsfgs
 #else
 #	echo "minerd already running or minerd disabled."
 #fi
 #
-if [ $(pgrep cgminer) ]; then
+if [ \$(pgrep cgminer) ]; then
 	echo "cgminer already running"
 	exit 1
 fi
@@ -55,7 +55,7 @@ fi
 #	screen -dmS cgml /home/januszeal/mine_litecoins.sh
 #elif [ -e /home/januszeal/.btc ]; then
 	echo "started btc mining in screen cglb"
-	screen -dmS cgmb $homedir/mine_bitcoins.sh
+	screen -dmS cgmb \$homedir/mine_bitcoins.sh
 #fi
 
 #if [ ! -e /home/januszeal/.ltc ] && [ ! -e /home/januszeal/.btc ]; then
