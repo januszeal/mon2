@@ -8,7 +8,7 @@ use Data::Dumper;
 # TODO: the following needs to be impimented still-
 # hypernova monitor - curl -s https://hypernova.pw/api/key/4fc00e01cfd5f9af1f5bc11a92a0948a1640e6e102b4ff3367ed106f7e267116/ | python -m json.tool
 
-my $homedir = "/home/januszeal/mon2"; # TODO: really should be named $basedir
+my $homedir = "/home/btc/mon2"; # TODO: really should be named $basedir
 my $monlog = "$homedir/.mon.log";
 my $fivefile = "$homedir/.five";
 my $defaultcoin = "btc";
@@ -19,10 +19,10 @@ if ( -e "$homedir/.devstop" ) {
   exit 100;
 }
 
-if ( ! -e "$homedir/mine_bitcoins.sh" ) {
-  print "[!] $homedir/mine_bitcoins.sh doesn't exist, exiting.\n";
-  exit 6
-}
+#if ( ! -e "$homedir/mine_bitcoins.sh" ) {
+#  print "[!] $homedir/mine_bitcoins.sh doesn't exist, exiting.\n";
+#  exit 6
+#}
 
 if ( ! -e "$homedir/mine.sh" ) {
   open( OUTPUT, q{>}, "$homedir/mine.sh" );
@@ -64,6 +64,7 @@ fi
 #fi
 EOT
   close(OUTPUT);
+  chmod 0755, "$homedir/mine.sh";
 }
 
 sub teelog {
@@ -131,6 +132,7 @@ close(DAT);
 unlink $tempfile;
 my (@gpus, @temp, @fan, @hashrate, @accepted, $hashavg);
 for my $array_ref (@raw) {
+  print "$array_ref\n";
 # if ( my @gpu = ( $array_ref =~ m!^ GPU \d+:\s+(\d+)\.\dC (\d+)RPM \| \d+\.\d./(\d+)\.\d.+ \| A:(\d+)!g ) ) {
   if ( my @gpu = ( $array_ref =~ m!^ AMU \d+:\s+\| \d+\.\d./(\d+)\.\d.+ \| A:(\d+)!g ) ) {
     push(@gpus, \@gpu);
@@ -138,18 +140,18 @@ for my $array_ref (@raw) {
 }
 
 for my $array_ref (@gpus) {
-  push (@temp, $array_ref->[0]);
-  push (@fan, $array_ref->[1]);
-  push (@hashrate, $array_ref->[2]);
-  push (@accepted, $array_ref->[3]);
+# push (@temp, $array_ref->[0]);
+# push (@fan, $array_ref->[1]);
+  push (@hashrate, $array_ref->[0]);
+  push (@accepted, $array_ref->[1]);
 }
 
 my $logentry;
 my $sumaccepted = eval(join('+', @accepted));
 my $numgpus = scalar @gpus;
 my $listhashes = join(",", @hashrate);
-my $listtemps = join(",", @temp);
-my $listfans = join(",", @fan);
+#my $listtemps = join(",", @temp);
+#my $listfans = join(",", @fan);
 
 if ( $humanreadable == 1 ) {
   $logentry = "accepted $sumaccepted from $numgpus devices mining ${mtype}tc - hashrates: [ $listhashes ]"; #, temps: [ $listtemps ], fans: [ $listfans ]";
