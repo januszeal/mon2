@@ -132,7 +132,7 @@ close(DAT);
 unlink $tempfile;
 my (@gpus, @temp, @fan, @hashrate, @accepted, $hashavg);
 for my $array_ref (@raw) {
-  print "$array_ref\n";
+# print "$array_ref\n";
 # if ( my @gpu = ( $array_ref =~ m!^ GPU \d+:\s+(\d+)\.\dC (\d+)RPM \| \d+\.\d./(\d+)\.\d.+ \| A:(\d+)!g ) ) {
   if ( my @gpu = ( $array_ref =~ m!^ AMU \d+:\s+\| \d+\.\d./(\d+)\.\d.+ \| A:(\d+)!g ) ) {
     push(@gpus, \@gpu);
@@ -156,7 +156,7 @@ my $listhashes = join(",", @hashrate);
 if ( $humanreadable == 1 ) {
   $logentry = "accepted $sumaccepted from $numgpus devices mining ${mtype}tc - hashrates: [ $listhashes ]"; #, temps: [ $listtemps ], fans: [ $listfans ]";
 } else {
-  $logentry = "TA:${sumaccepted}|Gs:${numgpus}|Coin:${mtype}tc|Hs:${listhashes}"; #|Ts:${listtemps}|Fs:${listfans}";
+  $logentry = "TA:${sumaccepted}|Devs:${numgpus}|Coin:${mtype}tc|Hs:${listhashes}"; #|Ts:${listtemps}|Fs:${listfans}";
 }
 
 teelog($logentry);
