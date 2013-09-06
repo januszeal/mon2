@@ -21,6 +21,53 @@ if ( -e "$homedir/.devstop" ) {
   exit 100;
 }
 
+if ( ! -e "$homedir/mine_bitcoins.sh" ) {
+  print "[!] $homedir/mine_bitcoins.sh doesn't exist, exiting.";
+  exit 6
+}
+
+if ( ! -e "$homedir/mine.sh" ) {
+  open( OUTPUT, q{>}, "$homedir/mine.sh" )
+print <<EOT
+#!/bin/bash
+DEFAULT_DELAY=0
+if [ "x$1" = "x" -o "x$1" = "xnone" ]; then
+   DELAY=$DEFAULT_DELAY
+else
+   DELAY=$1
+fi
+sleep $DELAY
+
+#if [ -z \$(pgrep minerd) ] && [ ! -e $homedir/.disableminerd ]; then
+#	echo "started ltc CPU mining in screen minerd"
+#	screen -dmS minerd $homedir/minerd -t 1 --url http://mining.usa.dallas.hypernova.pw:9332 --userpass januszeal.madokacpu:gsdfgdsfgs
+#else
+#	echo "minerd already running or minerd disabled."
+#fi
+#
+if [ $(pgrep cgminer) ]; then
+	echo "cgminer already running"
+	exit 1
+fi
+
+#if [ -e /home/januszeal/.ltc ]; then
+#	echo "started ltc GPU mining in screen cgml"
+#	screen -dmS cgml /home/januszeal/mine_litecoins.sh
+#elif [ -e /home/januszeal/.btc ]; then
+	echo "started btc mining in screen cglb"
+	screen -dmS cgmb $homedir/mine_bitcoins.sh
+#fi
+
+if [ ! -e /home/januszeal/.ltc ] && [ ! -e /home/januszeal/.btc ]; then
+	# defaulting to ltc
+	echo "state files don't exist, defaulting to ltc GPU mining. Creating .ltc and restarting..."
+	touch /home/januszeal/.ltc
+	/home/januszeal/mine.sh &
+fi
+EOT
+  close(OUTPUT);
+}
+
 sub teelog {
   #print $_;
   open (TEE, "| tee -ai $monlog");
@@ -52,17 +99,17 @@ if ( -e "$homedir/.stop" ) {
 
 my $tempfile = `mktemp -p /dev/shm`;
 chomp $tempfile;
-my $mtype;
+my $mtype = "b";
 
-if ( -e "$homedir/.ltc" ) {
-  $mtype = "l";
-} elsif ( -e "$homedir/.btc" ) {
-  $mtype = "b";
-} else {
-  teelog("error: no coin preference defined, assuming $defaultcoin and restarting...");
-  system("touch $homedir/.$defaultcoin");
-  exit 2
-}
+#if ( -e "$homedir/.ltc" ) {
+#  $mtype = "l";
+#} elsif ( -e "$homedir/.btc" ) {
+#  $mtype = "b";
+#} else {
+#  teelog("error: no coin preference defined, assuming $defaultcoin and restarting...");
+#  system("touch $homedir/.$defaultcoin");
+#  exit 2
+#}
 
 system("screen -S cgm" . $mtype . " -p 0 -X hardcopy $tempfile");
 if ( $? != 0 ) {
@@ -86,7 +133,8 @@ close(DAT);
 unlink $tempfile;
 my (@gpus, @temp, @fan, @hashrate, @accepted, $hashavg);
 for my $array_ref (@raw) {
-  if ( my @gpu = ( $array_ref =~ m!^ GPU \d+:\s+(\d+)\.\dC (\d+)RPM \| \d+\.\d./(\d+)\.\d.+ \| A:(\d+)!g ) ) {
+# if ( my @gpu = ( $array_ref =~ m!^ GPU \d+:\s+(\d+)\.\dC (\d+)RPM \| \d+\.\d./(\d+)\.\d.+ \| A:(\d+)!g ) ) {
+  if ( my @gpu = ( $array_ref =~ m!^ AMU \d+:\s+\| \d+\.\d./(\d+)\.\d.+ \| A:(\d+)!g ) ) {
     push(@gpus, \@gpu);
   } 
 }
@@ -106,9 +154,9 @@ my $listtemps = join(",", @temp);
 my $listfans = join(",", @fan);
 
 if ( $humanreadable == 1 ) {
-  $logentry = "accepted $sumaccepted from $numgpus devices mining ${mtype}tc - hashrates: [ $listhashes ], temps: [ $listtemps ], fans: [ $listfans ]";
+  $logentry = "accepted $sumaccepted from $numgpus devices mining ${mtype}tc - hashrates: [ $listhashes ]"; #, temps: [ $listtemps ], fans: [ $listfans ]";
 } else {
-  $logentry = "TA:${sumaccepted}|Gs:${numgpus}|Coin:${mtype}tc|Hs:${listhashes}|Ts:${listtemps}|Fs:${listfans}";
+  $logentry = "TA:${sumaccepted}|Gs:${numgpus}|Coin:${mtype}tc|Hs:${listhashes}"; #|Ts:${listtemps}|Fs:${listfans}";
 }
 
 teelog($logentry);
