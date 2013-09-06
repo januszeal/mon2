@@ -28,7 +28,7 @@ if ( ! -e "$homedir/mine_bitcoins.sh" ) {
 
 if ( ! -e "$homedir/mine.sh" ) {
   open( OUTPUT, q{>}, "$homedir/mine.sh" )
-print <<EOT
+print OUTPUT <<EOT
 #!/bin/bash
 DEFAULT_DELAY=0
 if [ "x$1" = "x" -o "x$1" = "xnone" ]; then
