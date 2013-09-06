@@ -6,11 +6,9 @@ use Data::Dumper;
 #use File::Tee qw(tee);
 
 # TODO: the following needs to be impimented still-
-# overtemp check and handling
-# GPU dropped detection and handling
 # hypernova monitor - curl -s https://hypernova.pw/api/key/4fc00e01cfd5f9af1f5bc11a92a0948a1640e6e102b4ff3367ed106f7e267116/ | python -m json.tool
 
-my $homedir = "/home/januszeal";
+my $homedir = "/home/januszeal/mon2"; # TODO: really should be named $basedir
 my $monlog = "$homedir/.mon.log";
 my $fivefile = "$homedir/.five";
 my $defaultcoin = "btc";
@@ -55,7 +53,7 @@ fi
 #	screen -dmS cgml /home/januszeal/mine_litecoins.sh
 #elif [ -e /home/januszeal/.btc ]; then
 	echo "started btc mining in screen cglb"
-	screen -dmS cgmb \$homedir/mine_bitcoins.sh
+	screen -dmS cgmb $homedir/mine_bitcoins.sh
 #fi
 
 #if [ ! -e /home/januszeal/.ltc ] && [ ! -e /home/januszeal/.btc ]; then
