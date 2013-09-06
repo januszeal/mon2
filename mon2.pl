@@ -5,8 +5,11 @@ use strict;
 use Data::Dumper;
 #use File::Tee qw(tee);
 
-# TODO: the following needs to be impimented still-
-# hypernova monitor - curl -s https://hypernova.pw/api/key/4fc00e01cfd5f9af1f5bc11a92a0948a1640e6e102b4ff3367ed106f7e267116/ | python -m json.tool
+# TODO:
+# write html logfile
+# move settings to settings file
+#   - automatically create default file if ! -e
+#
 
 my $homedir = "/home/btc/mon2"; # TODO: really should be named $basedir
 my $monlog = "$homedir/.mon.log";
@@ -154,9 +157,9 @@ my $listhashes = join(",", @hashrate);
 #my $listfans = join(",", @fan);
 
 if ( $humanreadable == 1 ) {
-  $logentry = "accepted $sumaccepted from $numgpus devices mining ${mtype}tc - hashrates: [ $listhashes ]"; #, temps: [ $listtemps ], fans: [ $listfans ]";
+  $logentry = "accepted $sumaccepted shares from $numgpus devices mining ${mtype}tc - hashrates: [ $listhashes ]"; #, temps: [ $listtemps ], fans: [ $listfans ]";
 } else {
-  $logentry = "TA:${sumaccepted}|Devs:${numgpus}|Coin:${mtype}tc|Hs:${listhashes}"; #|Ts:${listtemps}|Fs:${listfans}";
+  $logentry = "aShs:${sumaccepted}|Devs:${numgpus}|Coin:${mtype}tc|Hs:${listhashes}"; #|Ts:${listtemps}|Fs:${listfans}";
 }
 
 teelog($logentry);
