@@ -27,7 +27,7 @@ if ( ! -e "$homedir/mine_bitcoins.sh" ) {
 }
 
 if ( ! -e "$homedir/mine.sh" ) {
-  open( OUTPUT, q{>}, "$homedir/mine.sh" )
+  open( OUTPUT, q{>}, "$homedir/mine.sh" );
 print OUTPUT <<EOT
 #!/bin/bash
 DEFAULT_DELAY=0
@@ -58,12 +58,12 @@ fi
 	screen -dmS cgmb $homedir/mine_bitcoins.sh
 #fi
 
-if [ ! -e /home/januszeal/.ltc ] && [ ! -e /home/januszeal/.btc ]; then
-	# defaulting to ltc
-	echo "state files don't exist, defaulting to ltc GPU mining. Creating .ltc and restarting..."
-	touch /home/januszeal/.ltc
-	/home/januszeal/mine.sh &
-fi
+#if [ ! -e /home/januszeal/.ltc ] && [ ! -e /home/januszeal/.btc ]; then
+#	# defaulting to ltc
+#	echo "state files don't exist, defaulting to ltc GPU mining. Creating .ltc and restarting..."
+#	touch /home/januszeal/.ltc
+#	/home/januszeal/mine.sh &
+#fi
 EOT
   close(OUTPUT);
 }
